@@ -1,19 +1,82 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Loki from "lokijs";
+import { Vote } from "@/types/localTypes";
 
 const useDB = () => {
-    useEffect(() => {
-        try {
-            const dbInstance = new Loki('face.json');
-            // Load the database i it exists
-            dbInstance.loadDatabase({}, () => {
-                const collection = dbInstance.getCollection('faces');
-                if (!collection) {
-                    dbInstance.addCollection('faces');
-                }
-            });
-        } catch (error) {
-            console.error("useDB error:", error);
-        }
-    }, []);
+  const [db, setDB] = useState<Loki | null>(null);
+  const [faceCollection, setFaceCollection] =
+    useState<Loki.Collection<Float32Array> | null>(null);
+  const [voteCollection, setVoteCollection] =
+    useState<Loki.Collection<Vote> | null>(null);
+
+  useEffect(() => {
+    try {
+      const dbInstance = new Loki("22.json", {
+        persistenceMethod: "fs",
+      });
+
+      // load database if it exists
+      dbInstance.loadDatabase({}, () => {
+        // get or create collection of documents
+        const faces =
+          dbInstance.getCollection<Float32Array>("faces") ||
+          dbInstance.addCollection("faces");
+        const votes =
+          dbInstance.getCollection<Vote>("votes") ||
+          dbInstance.addCollection("votes");
+        setDB(dbInstance);
+        setFaceCollection(faces);
+        setVoteCollection(votes);
+      });
+    } catch (error) {
+      console.error("useDB error", error);
+    }
+  }, []);
+
+  const getAllFaces = () => {
+    if (!faceCollection) {
+      return [];
+    }
+    return faceCollection.find();
+  };
+  const getAllVotes = () => {
+    if (!voteCollection) {
+      return [];
+    }
+    return voteCollection.find();
+  };
+  const addFaces = (face: Float32Array) => {
+    if (!db || !faceCollection) {
+      return new Error("No DB or collection");
+    }
+    const response = faceCollection.insert(face);
+    db.saveDatabase();
+    return response;
+  };
+
+  const addVotes = (vote: Vote) => {
+    if (!db || !voteCollection) {
+      return new Error("No DB or collection");
+    }
+    const response = voteCollection.insert(vote);
+    db.saveDatabase();
+    return response;
+  };
+
+  const deleteAllFromDB = () => {
+    if (!db || !faceCollection || !voteCollection) {
+      return new Error("No DB");
+    }
+    db.deleteDatabase();
+  };
+
+  return {
+    getAllFaces,
+    getAllVotes,
+    addFaces,
+    addVotes,
+    deleteAllFromDB,
+  };
 };
+
+export { useDB };
