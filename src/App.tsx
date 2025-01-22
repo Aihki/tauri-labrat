@@ -4,9 +4,11 @@ import Layout from "./views/Layout";
 import Home from "./views/Home";
 import DetectFace from "./views/DetectFace";
 import Detected from "./views/Detected";
+import { DbProvider } from "./contexts/DbContext";
 
 const App = () => {
   return (
+    <DbProvider>
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
@@ -16,6 +18,7 @@ const App = () => {
         </Route>
       </Routes>
     </BrowserRouter>
+    </DbProvider>
   );
 };
 

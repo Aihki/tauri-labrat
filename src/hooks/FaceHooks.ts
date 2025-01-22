@@ -2,7 +2,6 @@ import { RefObject, useEffect, useState } from "react";
 import * as faceapi from "face-api.js";
 import randomstring from "@/lib/randomstring";
 
-
 const useFaceDetection = () => {
   const [detection, setDetection] = useState<faceapi.FaceDetection | null>(
     null
@@ -12,7 +11,7 @@ const useFaceDetection = () => {
     // Load the face detection models
     const loadModels = async () => {
       try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri("./models");
+        await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
         await faceapi.nets.faceLandmark68TinyNet.loadFromUri("./models");
         await faceapi.nets.faceRecognitionNet.loadFromUri("./models");
         console.log("Models loaded");
@@ -20,12 +19,15 @@ const useFaceDetection = () => {
         console.error("Error loading models:", error);
       }
     };
+
     loadModels();
   }, []);
+
   const getDescriptors = async (videoRef: RefObject<HTMLVideoElement>) => {
     if (!videoRef.current) {
       return;
     }
+
     const result = await faceapi
       .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks(true)
@@ -37,16 +39,32 @@ const useFaceDetection = () => {
     }
 
     const faceName = randomstring(6);
-    const labeledDescriptors = new faceapi.LabeledFaceDescriptors(faceName, [
+    const labeledDescriptor = new faceapi.LabeledFaceDescriptors(faceName, [
       result.descriptor,
     ]);
-
-    console.log(labeledDescriptors,'labeledDescriptors')
+    console.log("result", labeledDescriptor);
 
     setDetection(result.detection);
-    return labeledDescriptors;
+
+    return { result, labeledDescriptor };
   };
-  return { detection, getDescriptors };
+
+  const matchFace = async (
+    currentDescriptors: Float32Array,
+    descriptorsFromDB: Float32Array[]
+  ) => {
+    if (descriptorsFromDB && descriptorsFromDB.length > 0) {
+      const faceMatcher = new faceapi.FaceMatcher(
+        descriptorsFromDB.map((descriptor) => {
+          return faceapi.LabeledFaceDescriptors.fromJSON(descriptor);
+        })
+      );
+
+      return faceMatcher.matchDescriptor(currentDescriptors);
+    }
+  };
+
+  return { detection, getDescriptors, matchFace };
 };
 
 export { useFaceDetection };

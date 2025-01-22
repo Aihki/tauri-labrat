@@ -1,15 +1,25 @@
 import { Button } from "@/components/ui/button";
+import { useDbContext } from "@/hooks/ContextHooks";
 import { NavLink } from "react-router";
 
 const Home = () => {
+  const { getAllFaces, getAllVotes, deleteAllFromDB } = useDbContext();
+  const handleClearDB = () => {
+    try {
+    deleteAllFromDB();
+    }
+    catch (error) {
+      console.error('Error clearing database:', error);
+    }
+  }
   return (
     <>
       <h1 className="text-center p-4 text-lg">Home</h1>
 
       <section className="text-center">
-        <p>Number of faces in database: X</p>
+        <p>Number of faces in database: {getAllFaces.length} </p>
 
-        <p>Number of votes in database: Y</p>
+        <p>Number of votes in database: {getAllVotes.length} </p>
       </section>
 
       <section className="p-4">
@@ -27,7 +37,7 @@ const Home = () => {
           <Button>Start Voting</Button>
         </NavLink>
 
-        <Button>Clear Database</Button>
+        <Button onClick={handleClearDB}>Clear Database</Button>
       </section>
     </>
   );

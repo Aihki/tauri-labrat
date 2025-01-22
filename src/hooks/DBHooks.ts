@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import Loki from "lokijs";
-import { Vote } from "@/types/localTypes";
+// hooks/DBHooks.ts
+import { useEffect, useState } from 'react';
+import Loki from 'lokijs';
+import { Vote } from '@/types/localTypes';
 
 const useDB = () => {
   const [db, setDB] = useState<Loki | null>(null);
@@ -11,25 +12,21 @@ const useDB = () => {
 
   useEffect(() => {
     try {
-      const dbInstance = new Loki("22.json", {
-        persistenceMethod: "fs",
-      });
+      const dbInstance = new Loki('22.json');
 
-      // load database if it exists
       dbInstance.loadDatabase({}, () => {
-        // get or create collection of documents
         const faces =
-          dbInstance.getCollection<Float32Array>("faces") ||
-          dbInstance.addCollection("faces");
+          dbInstance.getCollection<Float32Array>('faces') ||
+          dbInstance.addCollection('faces');
         const votes =
-          dbInstance.getCollection<Vote>("votes") ||
-          dbInstance.addCollection("votes");
+          dbInstance.getCollection<Vote>('votes') ||
+          dbInstance.addCollection('votes');
         setDB(dbInstance);
         setFaceCollection(faces);
         setVoteCollection(votes);
       });
     } catch (error) {
-      console.error("useDB error", error);
+      console.error('useDB error', error);
     }
   }, []);
 
@@ -39,15 +36,17 @@ const useDB = () => {
     }
     return faceCollection.find();
   };
+
   const getAllVotes = () => {
     if (!voteCollection) {
       return [];
     }
     return voteCollection.find();
   };
+
   const addFaces = (face: Float32Array) => {
     if (!db || !faceCollection) {
-      return new Error("No DB or collection");
+      throw new Error('No database or collection');
     }
     const response = faceCollection.insert(face);
     db.saveDatabase();
@@ -56,7 +55,7 @@ const useDB = () => {
 
   const addVotes = (vote: Vote) => {
     if (!db || !voteCollection) {
-      return new Error("No DB or collection");
+      throw new Error('No database or collection');
     }
     const response = voteCollection.insert(vote);
     db.saveDatabase();
@@ -64,19 +63,16 @@ const useDB = () => {
   };
 
   const deleteAllFromDB = () => {
-    if (!db || !faceCollection || !voteCollection) {
-      return new Error("No DB");
+    if (!db || !voteCollection || !faceCollection) {
+      throw new Error('No database or collection');
     }
-    db.deleteDatabase();
+    faceCollection.clear();
+    voteCollection.clear();
+    db.saveDatabase();
+    setFaceCollection(null);
+    setVoteCollection(null);
   };
-
-  return {
-    getAllFaces,
-    getAllVotes,
-    addFaces,
-    addVotes,
-    deleteAllFromDB,
-  };
+  return { db, addFaces, addVotes, getAllFaces, getAllVotes, deleteAllFromDB };
 };
 
 export { useDB };
