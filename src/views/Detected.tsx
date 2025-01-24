@@ -4,7 +4,7 @@ import { useLocation } from 'react-router';
 const Detected = () => {
   const { state } = useLocation();
   const { addFaces } = useDB();
-  console.log('state', state);
+
   // store descriptors to lokijs database
   try {
     addFaces(state);

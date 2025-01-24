@@ -1,4 +1,3 @@
-// contexts/DbContext.tsx
 import { createContext, useEffect, useState } from 'react';
 import { useDB } from '../hooks/DBHooks';
 import { Vote } from '@/types/localTypes';
@@ -10,7 +9,7 @@ type DbContextType = {
   getAllFaces: () => (Float32Array & LokiObj)[];
   deleteAllFromDB: () => void;
   addVotes: (vote: Vote) => Vote | undefined;
-  getAllVotes: () => (Vote & LokiObj)[] ;
+  getAllVotes: () => (Vote & LokiObj)[];
   faces: (Float32Array & LokiObj)[];
 };
 
@@ -21,10 +20,11 @@ const DbProvider = ({ children }: { children: React.ReactNode }) => {
   const { db, addFaces, getAllFaces, deleteAllFromDB, addVotes, getAllVotes } =
     useDB();
 
-    useEffect(() => {
-        setFaces(getAllFaces());  
-    }, []);
+  useEffect(() => {
+    setFaces(getAllFaces());
+  }, []);
 
+  console.log('faces context', faces);
 
   return (
     <DbContext.Provider

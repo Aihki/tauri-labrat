@@ -1,4 +1,3 @@
-// hooks/DBHooks.ts
 import { useEffect, useState } from 'react';
 import Loki from 'lokijs';
 import { Vote } from '@/types/localTypes';
@@ -14,7 +13,9 @@ const useDB = () => {
     try {
       const dbInstance = new Loki('22.json');
 
+      // load database if it exists
       dbInstance.loadDatabase({}, () => {
+        // get or create collection of documents
         const faces =
           dbInstance.getCollection<Float32Array>('faces') ||
           dbInstance.addCollection('faces');

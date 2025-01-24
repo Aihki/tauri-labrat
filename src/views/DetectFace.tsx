@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
-import Camera from "@/components/Camera";
-import { useFaceDetection } from "@/hooks/FaceHooks";
-import { useNavigate } from "react-router";
-import { useDbContext } from "@/hooks/ContextHooks";
+import React, { useEffect, useRef } from 'react';
+
+import Camera from '@/components/Camera';
+import { useFaceDetection } from '@/hooks/FaceHooks';
+import { useNavigate } from 'react-router';
+import { useDbContext } from '@/hooks/ContextHooks';
 
 const DetectFace: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null); // Reference to the video element
@@ -21,16 +22,17 @@ const DetectFace: React.FC = () => {
         if (descriptorsResult) {
           const match = await matchFace(
             descriptorsResult.result.descriptor,
-            faces
+            faces,
           );
+        
           if (match && match.distance > 0.3) {
-            navigate("/detected", {
+            navigate('/detected', {
               state: descriptorsResult.labeledDescriptor.toJSON(),
             });
           }
         }
       } catch (error) {
-        console.error("Error detecting face:", error);
+        console.error('Error detecting face:', error);
       }
 
       // Schedule the next detection
@@ -55,7 +57,7 @@ const DetectFace: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error("Error initializing video feed:", error);
+        console.error('Error initializing video feed:', error);
       }
     };
 
@@ -69,23 +71,22 @@ const DetectFace: React.FC = () => {
     };
   }, []);
 
-  // console.log('Detection object', detection);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
       <h1>Face Detection</h1>
-      <div style={{ position: "relative" }}>
+      <div style={{ position: 'relative' }}>
         <Camera ref={videoRef} width={800} aspect={16 / 9} />
         {detection && (
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: detection.box.y,
               left: detection.box.x,
               width: detection.box.width,
               height: detection.box.height,
-              border: "2px solid red",
-              pointerEvents: "none",
+              border: '2px solid red',
+              pointerEvents: 'none',
             }}
           ></div>
         )}
