@@ -2,7 +2,7 @@ import { useStore } from '@/stores/DBStores';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-const Results = () => {
+const Result = () => {
   const navigate = useNavigate();
   const [time, setTime] = useState(2);
   const { state } = useLocation();
@@ -41,4 +41,4 @@ const Results = () => {
   );
 };
 
-export default Results;
+export default Result;

@@ -6,28 +6,28 @@ import DetectFace from './views/DetectFace';
 import Detected from './views/Detected';
 import { useStore } from './stores/DBStores';
 import { useEffect } from 'react';
-import Gesture from './views/Gesture';
-import Results from './views/Results';
+import DetectGesture from './views/DetectGesture';
+import Result from './views/Result';
 
 const App = () => {
-  const {init} = useStore();
+  const { init } = useStore();
 
   useEffect(() => {
     init();
   }, []);
 
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/face" element={<DetectFace />} />
-            <Route path="/detected" element={<Detected />} />
-            <Route path="/gesture/:facename" element={<Gesture />} />
-            <Route path="/results" element={<Results />} />    
-          </Route>
-        </Routes>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/face" element={<DetectFace />} />
+          <Route path="/detected" element={<Detected />} />
+          <Route path="/gesture/:faceName" element={<DetectGesture />} />
+          <Route path="/result" element={<Result />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 };
 

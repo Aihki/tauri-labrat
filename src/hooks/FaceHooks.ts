@@ -14,6 +14,7 @@ const useFaceDetection = () => {
         await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
         await faceapi.nets.faceLandmark68TinyNet.loadFromUri('./models');
         await faceapi.nets.faceRecognitionNet.loadFromUri('./models');
+        console.log('Models loaded');
       } catch (error) {
         console.error('Error loading models:', error);
       }
@@ -41,7 +42,7 @@ const useFaceDetection = () => {
     const labeledDescriptor = new faceapi.LabeledFaceDescriptors(faceName, [
       result.descriptor,
     ]);
-  
+    console.log('result', labeledDescriptor);
 
     setDetection(result.detection);
 
@@ -52,13 +53,14 @@ const useFaceDetection = () => {
     currentDescriptors: Float32Array,
     descriptorsFromDB: Float32Array[],
   ) => {
-
+    console.log('pöö', descriptorsFromDB, 'hep', currentDescriptors);
     if (descriptorsFromDB && descriptorsFromDB.length > 0) {
       const faceMatcher = new faceapi.FaceMatcher(
         descriptorsFromDB.map((descriptor) => {
           return faceapi.LabeledFaceDescriptors.fromJSON(descriptor);
         }),
       );
+      console.log('mätser', faceMatcher);
       return faceMatcher.matchDescriptor(currentDescriptors);
     }
   };

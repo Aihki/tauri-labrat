@@ -4,7 +4,7 @@ import { ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-const Gesture = () => {
+const DetectGesture = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { gesture, savedGesture } = useGestureRecognition(videoRef);
 
@@ -36,4 +36,4 @@ const Gesture = () => {
   );
 };
 
-export default Gesture;
+export default DetectGesture;

@@ -5,13 +5,13 @@ import { NavLink } from 'react-router';
 
 const Home = () => {
   const { faces, votes, deleteAllFromDB } = useStore();
-  const [results, setResults] = useState({ positives: 0, negatives: 0 });
+  const [result, setResult] = useState({ positives: 0, negatives: 0 });
 
   useEffect(() => {
-    try{
-    const positives = votes.filter((vote) => vote.vote === 'Thumb_Up').length;
-    const negatives = votes.filter((vote) => vote.vote === 'Thumb_Down').length;
-    setResults({ positives, negatives });
+    try {
+      const positives = votes.filter((v) => v.vote === 'Thumb_Up').length;
+      const negatives = votes.filter((v) => v.vote === 'Thumb_Down').length;
+      setResult({ positives, negatives });
     } catch (error) {
       console.error(error);
     }
@@ -20,6 +20,7 @@ const Home = () => {
   const handleClearDatabase = () => {
     try {
       deleteAllFromDB();
+      setResult({ positives: 0, negatives: 0 });
     } catch (error) {
       console.error(error);
     }
@@ -36,8 +37,8 @@ const Home = () => {
         <p>Results:</p>
 
         <div>
-          <p>Positives: {results.positives}</p>
-          <p>Negatives:  {results.negatives}</p>
+          <p>Positives: {result.positives}</p>
+          <p>Negatives: {result.negatives}</p>
         </div>
       </section>
       <section className="p-8 flex justify-around">
